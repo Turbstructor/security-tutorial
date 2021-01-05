@@ -10,7 +10,7 @@
     - `%rax` : `syscall`로 실행할 명령의 코드. `sys_write`를 위해선 `rax`에 1을 줘야 한다.
     - `%rdi` : write를 하게 될 파일의 위치(`unsigned int fd`). `1`일 경우 stdout - 표준 출력 - 으로 보낸다.
     - `%rsi` : write를 할 메세지(`const char *buf`).
-    - `%rdx` : write를 할 메세지의 길이(`NULL`도 포함되는 것 같다). 고정값으로 줄 수도 있지만... 출력하려는 메세지가 이것보다 짧으면 몰라도 이것보다 길면 더러운 문자가 출력된다.
+    - `%rdx` : write를 할 메세지의 길이(`NULL`은 제외). 고정값으로 줄 수도 있지만... 출력하려는 메세지가 이것보다 짧으면 몰라도 이것보다 길면 더러운 문자가 출력된다.
 - `sys_exit` : 프로그램 종료
     - `%rdi` : 에러 코드(`int error_code`).
 
@@ -30,7 +30,7 @@
 
         ; Terminate program
         mov rax, 60
-        xor rdi, rdi
+        xor rdi, rdi ; 'mov rdi, 0' will also work.
         syscall
 
     section .data
@@ -74,5 +74,9 @@
         syscall        
 
     section .data
-        msg db "hello",0xA,0 ; msg containing array of bytes "hello", including LF character and NULL.
-        len db 0,0xA ; len containing NULL character and LF character.
+        msg db "hello", 0xA, 0 ; msg containing array of bytes "hello", including LF character and NULL.
+        len db 0, 0xA ; len containing NULL character and LF character.
+
+## 참고한 사이트
+- [Linux Assembly HOWTO](https://wiki.kldp.org/HOWTO/html/Assembly-HOWTO/hello.html)
+- [데이터 세그먼트](https://opentutorials.org/module/1596/9766)
