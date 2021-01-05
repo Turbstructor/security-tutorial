@@ -38,7 +38,7 @@
 
 ## 참고한 사이트들
 - 참고 1. [CIH 바이러스 코드](https://github.com/onx/CIH)
-- 참고 2. [위키: CIH 바이러스(영문)](https://en.wikipedia.org/wiki/CIH_(computer_virus)
+- 참고 2. [위키: CIH 바이러스(영문)](https://en.wikipedia.org/wiki/CIH_(computer_virus))
 - 참고 3. [CIH 바이러스가 컴퓨터를 파괴하는 영상](https://www.youtube.com/watch?v=RrnWFAx5vJg)
 ...
 - 참고 (n - 2) : [체르노빌 바이러스란>](http://www.munhwa.com/news/view.html?no=19990426647)
