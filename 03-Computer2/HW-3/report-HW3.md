@@ -207,3 +207,5 @@ int main()
 '''
   </p>
 </details>
+
+![arith_v_bitwise_screenshot](./arith_v_bitwise_screenshot.png)
