@@ -11,6 +11,7 @@
 <details>
   <summary>`arith_v_bitwise.c`</summary>
   <p>
+    
 ```c
 #include<stdio.h>
 #include<time.h>
