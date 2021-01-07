@@ -204,10 +204,10 @@ int main()
 
     return 0;
 }
-\```
+```
 
   </p>
-</detais>
+</details>
 
-이걸 Archlinux
+이걸 Archlinux에서 실행한 결과는 다음과 같다:
 ![arith_v_bitwise_screenshot](arith_v_bitwise_screenshot.png)
