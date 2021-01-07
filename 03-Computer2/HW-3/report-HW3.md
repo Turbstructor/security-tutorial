@@ -204,8 +204,9 @@ int main()
 
     return 0;
 }
-'''
+```
   </p>
-</details>
+</detais>
 
-![arith_v_bitwise_screenshot](./arith_v_bitwise_screenshot.png)
+이걸 Archlinux
+![arith_v_bitwise_screenshot](arith_v_bitwise_screenshot.png)
