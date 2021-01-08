@@ -1,5 +1,7 @@
 **경고**. 조작하는 방법을 파악해야 한다. 이 글만 보고는... **gdb를 이용하는 방법도 제대로 파악하지 못했다는 게 보인다**. 잘못 보면 **다른 데서 답을 가져왔다는 이야기도 나올 수 있겠네**... 이걸 보고 **처음 접하는 사람들이 이해를 할 수 있어야 한다**. 다음 번엔 조금 더 자세하게/ 해 보자.
 
+참고하자. [29기에 잘 하신 분이 있다.](https://github.com/HDSeungJun/gbc_security_hw/blob/master/day4/crackme0x04.md) [29기에 잘 하신 분이 _한명 더_ 있다.](https://github.com/KkoalaB/GBC_Security/blob/master/day4/crackme0x04.md)
+
 # Report. HW4.
 
 ## `crackme0x04`
