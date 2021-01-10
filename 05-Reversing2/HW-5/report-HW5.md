@@ -12,8 +12,8 @@
 
 2. 함수가 뭐가 있죠
 
-디버거 모드로 `radare2`를 킨 다음, `aa`("analyze all")를 치고 그 다음... 함수 리스트를 `afl`을 통하여 뽑아보았다. !['r2 -d easyelf'; aa; afl](.easyelf_screenshots/easyelf%232.png) `main` 함수가 있으니, 여기서부터 시작을 해 보자. `dcu main`("continue until `main`) 다음 `Vpp` 명령어를 주면... 아래와 같은 코드가 나온다.
+디버거 모드로 `radare2`를 킨 다음, `aa`("analyze all")를 치고 그 다음... 함수 리스트를 `afl`을 통하여 뽑아보았다. !['r2 -d easyelf'; aa; afl](.easyelf_screenshots/easyelf_%232.png) `main` 함수가 있으니, 여기서부터 시작을 해 보자. `dcu main`("continue until `main`) 다음 `Vpp` 명령어를 주면... 아래와 같은 코드가 나온다.
 
-!['dcu main'; Vpp](.easyelf_screenshots/easyelf%234.png)
+!['dcu main'; Vpp](.easyelf_screenshots/easyelf_%234.png)
 
 ## bomb - 노란 선 제거
