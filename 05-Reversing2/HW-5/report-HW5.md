@@ -141,4 +141,74 @@
 
 ## bomb - 노란 선 제거
 
+### 1. 문장이 뭐가 있죠
+
+똑같이 `rabin2 -z` 명령어를 사용했는데,
+
+![bomb_Strings](./bomb_screenshots/bomb_%231.png)
+
+... 좀 많다. 
+
+### 2. 함수가 뭐가 있죠
+
+![bomb_functions](./bomb_screenshots/bomb_%232.png)
+
+... 얘도 좀 많다. 원래 있는 함수들도 많이 쓰지만, 여기서 정의한 부분도 많은 것 같다. 우선 이번 과제는 "노란 선을 제거"하는 것만이니, `sym.yellow_preflight`, `sym_yellow`, `main` 중심으로 봐야 할 거 같다.
+
+![bomb_main](./bomb_screenshots/bomb_%234.png)
+
+메뉴를 출력하는 부분과 메뉴 선택을 물어오는 부분이다. `fgets`를 통해 입력을 받는데, 메뉴 번호 `1`을 입력해도, 메뉴 `yellow`를 입력해도(대소 무시) 노란색 선을 해제하는 부분으로 넘어간다.
+
+![sym.yellow](./bomb_screenshots/bomb_%237.png)
+
+`sym.yellow` 부분이다(처음에 `main`에서 시작하지 않고 `dcu sym.yellow`를 통하여 노란색 선을 제거하는 메뉴 입력을 주고 여기서부터 시작할 수도 있다). 이 뒤에...
+
+    0x080497a1      leave
+    0x080497a2      ret
+    
+...가 잘리긴 했지만, 키를 비교하고 동일할 경우 `"UNLOCK PASSWORD 1 ACCEPTED, LOCK DISENGAGED"`를 출력하는 부분만 있다. 비밀번호를 입력하는 부분은 당장은 안 보이는데,
+
+    0x0804971f      call sym.yellow_preflight
+    
+에서 다루는 것 같아 여기 안으로 들어가 보니, 윗 사진 중 `0x080496e8` ~ `0x08049718` 주소의 코드들이 나온다. `fgets` 함수를 통하여 문자열을 입력하고 나면 다시 `sym.yellow`로 돌아가는데,
+
+    0x080497**      movzx eax, byte [0x804c2**]
+    0x080497**      cmp al, 0x**
+    0x080497**      jne 0x804977c
+
+8개 글자를 비교하는 모든 부분이 위와 같은 코드를 지닌다. `obj.buffer`의 주소는 `0x804c24c`로 나오고, 여기서부터 8개의 글자를 각각..
+
+|index|주소|비교하는 글자|
+|0|`0x804c24c`|`0x38` (`8`)|
+|1|`0x804c24d`|`0x34` (`4`)|
+|2|`0x804c24e`|`0x33` (`3`)|
+|3|`0x804c24f`|`0x37` (`7`)|
+|4|`0x804c250`|`0x31` (`1`)|
+|5|`0x804c251`|`0x30` (`0`)|
+|6|`0x804c252`|`0x36` (`6`)|
+|7|`0x804c253`|`0x35` (`5`)|
+
+...과 비교한다. `easyelf`때와는 다르게 여기선 XOR 암호화는 진행되지 않고, 바로 비밀번호가 `84371065`라는 것을 알 수 있었다.
+
+easyelf와 비슷하게, 각각 글자를 비교하여 일치할 경우 다음 글자를 확인하는 순서로 넘어가지만, 만약 여기서 한 번이라도 비밀번호를 틀렸다면..
+
+    0x0804977c      mov eax, dword obj.wire_yellow
+    0x08049781      shl eax, 0xa
+    0x08049784      mov dword obj.wire_yellow, eax
+    0x08049789      jmp 0x80497a1
+    ...
+    0x080497a1      leave
+    0x080497a2      ret
+    
+의 부분으로 바로 넘어간다.
+
+전부 다 일치했다면, 위의 `0x0849789`에서 바로 `0x08497a1`으로 넘어가지 않고, 비밀번호가 일치하고 선을 끊었다는 메세지를 출력하는
+
+    0x0804978b      mov dword [esp], str.e_43m__e_0m_e_33m_UNLOCK_PASSWORD_!_ACCEPTED__LOCK_DISENGAGED_e_0m
+    0x08049792      call sym.imp.puts
+    0x08049797      mov dword obj.wire_yellow, 0
+
+의 코드 3줄을 거치고 `sym.yellow`가 호출되었던 주소로 돌아간다.
+    
+
 
