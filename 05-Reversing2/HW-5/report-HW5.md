@@ -14,7 +14,7 @@
 
 디버거 모드로 `radare2`를 킨 다음, `aa`("analyze all")를 치고 그 다음... 함수 리스트를 `afl`을 통하여 뽑아보았다. !['r2 -d easyelf'; aa; afl](./easyelf_screenshots/easyelf_%232.png) `main` 함수가 있으니, 여기서부터 시작을 해 보자. `dcu main`("continue until `main`) 다음 `Vpp` 명령어를 주면... 아래와 같은 코드가 나온다.
 
-### 3. 코드(?)
+### 3. `main`
 
 !['dcu main'; Vpp](./easyelf_screenshots/easyelf_%234.png)
 
@@ -155,6 +155,8 @@
 
 ... 얘도 좀 많다. 원래 있는 함수들도 많이 쓰지만, 여기서 정의한 부분도 많은 것 같다. 우선 이번 과제는 "노란 선을 제거"하는 것만이니, `sym.yellow_preflight`, `sym_yellow`, `main` 중심으로 봐야 할 거 같다.
 
+### 3. `main`
+
 ![bomb_main](./bomb_screenshots/bomb_%234.png)
 
 메뉴를 출력하는 부분과 메뉴 선택을 물어오는 부분이다. `fgets`를 통해 입력을 받는데, 메뉴 번호 `1`을 입력해도, 메뉴 `yellow`를 입력해도(대소 무시) 노란색 선을 해제하는 부분으로 넘어간다.
@@ -179,6 +181,7 @@
 8개 글자를 비교하는 모든 부분이 위와 같은 코드를 지닌다. `obj.buffer`의 주소는 `0x804c24c`로 나오고, 여기서부터 8개의 글자를 각각..
 
 |index|주소|비교하는 글자|
+|---|---|---|
 |0|`0x804c24c`|`0x38` (`8`)|
 |1|`0x804c24d`|`0x34` (`4`)|
 |2|`0x804c24e`|`0x33` (`3`)|
@@ -195,18 +198,25 @@ easyelf와 비슷하게, 각각 글자를 비교하여 일치할 경우 다음 �
     0x0804977c      mov eax, dword obj.wire_yellow
     0x08049781      shl eax, 0xa
     0x08049784      mov dword obj.wire_yellow, eax
+    ...?
     0x08049789      jmp 0x80497a1
     ...
     0x080497a1      leave
     0x080497a2      ret
     
-의 부분으로 바로 넘어간다.
+의 부분으로 바로 넘어간다. (obj.wire_yellow는 처음에 `1`의 값을 가지고 있었는데, 해체에 성공할 경우 `0`으로 바뀌고, 실패할 경우 `0x400`이란 다른 값을 가지게 된다.) Step Into를 진행하려 했는데, `obj.wire_yellow`가 `0`이나 `1`이 아닌 다른 값 - 여기선 `0x400`이 된다 - 을 가지는
 
-전부 다 일치했다면, 위의 `0x0849789`에서 바로 `0x08497a1`으로 넘어가지 않고, 비밀번호가 일치하고 선을 끊었다는 메세지를 출력하는
+    0x08049784      mov dword obj.wire_yellow, eax
+    
+...의 코드를 실행한 직후 - 밑의 `leave`, `ret`에도 가기 전에 - `"KABOOM (폭탄 구름)"`의 메세지를 띄우게 된다. (main 실행 시 `pthread_create`란 함수를 통해 `disarm_handler`란 함수를 별도의 스레드에서 실행을 하는데, 이것과 연관이 있는 게 아닐까 생각하고 있다)
+
+전부 다 일치했다면... 일단 맨 마지막(8번째) 글자를 체크할 때 글자가 일치할 경우 아래의, 위의 코드를 진행하지 않고 비밀번호가 일치하고 선을 끊었다는 메세지를 출력하는
 
     0x0804978b      mov dword [esp], str.e_43m__e_0m_e_33m_UNLOCK_PASSWORD_!_ACCEPTED__LOCK_DISENGAGED_e_0m
     0x08049792      call sym.imp.puts
     0x08049797      mov dword obj.wire_yellow, 0
+    0x080497a1      leave
+    0x080497a2      ret
 
 의 코드 3줄을 거치고 `sym.yellow`가 호출되었던 주소로 돌아간다.
     
